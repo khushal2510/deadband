@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Desk · Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
+</head><body>
+<header id="topbar"></header>
+<main>
+<div class="wrap">
+
+  <div class="page-head">
+    <div><div class="label crumb">Desk</div><h1>The <em>paperwork</em> that builds plants</h1></div>
+    <p>Deliverables, workflow, standards, glossary and a tag decoder. The parts of the job that happen in a spreadsheet.</p>
+  </div>
+  <div class="views-bar"><div class="tabs" role="tablist" id="viewTabs" aria-label="Desk sections"></div></div>
+  <div id="views" class="view-pad">
+    <div class="topic" data-topic="docs">
+        <h3 class="tt">Deliverables</h3>
+        <p class="intro">A typical I&amp;C document list for a compressor package. The client VDRL decides the real scope, formats and numbering, so use this as a prompt. Ticks are saved in this browser only.</p>
+        <div class="dl-head">
+          <div class="ring" id="dlRing"><span id="dlPct">0%</span></div>
+          <div>
+            <b id="dlCount">0 of 0 done</b>
+            <p class="muted" style="font-size:.9rem">Common revision flow: issued for review, for approval, for construction, then as-built.</p>
+            <button class="btn ghost sm" id="dlReset" type="button" style="margin-top:8px">Clear ticks</button>
+          </div>
+        </div>
+        <div class="two" id="dlGroups"></div>
+      </div>
+
+    <div class="topic" data-topic="workflow" data-label="Project workflow" hidden>
+      <h3 class="tt">From FEED to handover</h3>
+      <p class="intro">Pick a project phase to see what instrumentation and control delivers in it, and one practical tip.</p>
+      <div class="block">
+        <div class="phases" id="phBtns" role="group" aria-label="Project phases"></div>
+        <div id="phOut" aria-live="polite"></div>
+      </div>
+      <div class="two">
+        <div class="block"><h3>Revision codes</h3>
+          <div class="tablewrap" style="margin-top:10px"><table><tbody>
+            <tr><td class="tagc">IFR</td><td>Issued for review: internal or client comment round.</td></tr>
+            <tr><td class="tagc">IFA</td><td>Issued for approval: client sign-off before the work proceeds.</td></tr>
+            <tr><td class="tagc">IFC</td><td>Issued for construction: released to build.</td></tr>
+            <tr><td class="tagc">AB</td><td>As-built: updated to match what was installed.</td></tr>
+          </tbody></table></div>
+          <p class="src">Typical coding. Clients define their own, so use the document control procedure.</p>
+        </div>
+        <div class="block"><h3>Surviving client-specific formats</h3><ul class="dots" style="margin-top:10px">
+          <li>Get the client templates, tag numbering rules and units before the first datasheet, not after the first comment sheet.</li>
+          <li>Keep one master instrument index and generate other documents from it.</li>
+          <li>Answer every comment on a comment resolution sheet with a clear status, even if the answer is noted.</li>
+          <li>Raise a technical query early when two client documents conflict. Record the answer and date.</li>
+          <li>Track vendor documents weekly against the VDRL.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="std">
+        <h3 class="tt">Standards</h3>
+        <p class="intro">The documents that come up most on compressor I&amp;C work. Edition numbers are deliberately left out. Use the ones named in the project specification.</p>
+        <div class="tabs" role="tablist" aria-label="Standard category" id="stdTabs"></div>
+        <div class="gl" id="stdList"></div>
+      </div>
+    <div class="topic" data-topic="gloss">
+        <h3 class="tt">Glossary</h3>
+        <p class="intro">The acronyms that fly around review meetings.</p>
+        <label class="f" for="glSearch" style="max-width:420px">Search terms or meanings<input type="search" id="glSearch" placeholder="Try SIL, HFT, KO drum, VDRL" autocomplete="off"></label>
+        <p class="muted" id="glCount" style="margin:10px 0 14px; font-size:.9rem"></p>
+        <div class="gl" id="glList"></div>
+      </div>
+    <div class="topic" data-topic="tags">
+        <h3 class="tt">Tag decoder</h3>
+        <p class="intro">Instrument tags follow ISA-5.1: first letter for the measured variable, optional modifier, then the function letters. Type a tag to read it.</p>
+        <div class="block">
+          <label class="f" for="tagIn" style="max-width:360px">Instrument tag<input type="text" id="tagIn" value="PDAH-1204" autocomplete="off" spellcheck="false"></label>
+          <div class="chips" style="margin-top:12px" id="tagEx"></div>
+          <div class="tagchips" id="tagOut" aria-live="polite"></div>
+          <p id="tagSentence" style="margin-top:14px; font-weight:500"></p>
+          <p class="src">Source: ISA-5.1, instrumentation symbols and identification. Companies add their own conventions for unit, area and loop numbering, so follow the project tag procedure.</p>
+        </div>
+      </div>
+  </div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="desk"</script>
+<script src="common.js"></script>
+<script src="sound.js"></script>
+
+<script src="desk.js"></script>
+<script src="deliver.js"></script>
+<script src="tags.js"></script>
+<script>initViews();</script>
+</body></html>

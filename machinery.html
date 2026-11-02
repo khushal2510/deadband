@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Machinery · Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
+</head><body>
+<header id="topbar"></header>
+<main>
+<div class="wrap">
+
+  <div class="page-head">
+    <div><div class="label crumb">Machinery</div><h1>Things that <em>spin</em></h1></div>
+    <p>Rotating equipment is where instrumentation meets mechanics. Compressors, pumps, turbines and motors, with the standards, protection and instruments that usually come with them.</p>
+  </div>
+  <div class="views-bar"><div class="tabs" role="tablist" id="viewTabs" aria-label="Machinery sections"></div></div>
+  <div id="views" class="view-pad">
+
+    <div class="topic" data-topic="overview" data-label="Overview">
+      <h3 class="tt">Rotating equipment at a glance</h3>
+      <p class="intro">The measurements repeat across machines: speed, vibration, bearing temperature, lube oil, process pressures and flows. What changes is the failure mode you are guarding against.</p>
+      <div class="analogy">
+        <div class="block"><h4>Compressors</h4><p>Reciprocating, screw and centrifugal. Surge, liquid carry-over, seal gas, vibration, lube oil and capacity control dominate.</p><div class="chips" style="margin-top:10px"><span class="chip">API 617</span><span class="chip">API 618</span><span class="chip">API 619</span></div><p style="margin-top:10px"><a href="#compressors">Compressor types</a> · <a href="#surge">Anti-surge</a></p></div>
+        <div class="block"><h4>Pumps</h4><p>Dry running, dead-heading, cavitation and seal failure are the big risks. Seal flush and barrier plans carry a lot of instruments.</p><div class="chips" style="margin-top:10px"><span class="chip">API 610</span><span class="chip">API 682</span></div><p style="margin-top:10px"><a href="#pumps">Pumps and seal plans</a></p></div>
+        <div class="block"><h4>Steam and gas turbines</h4><p>Overspeed protection independent of the governor, trip and throttle valves, lube and control oil, vibration and axial position, and exhaust or blade path temperature on gas turbines.</p><div class="chips" style="margin-top:10px"><span class="chip">API 611/612</span><span class="chip">API 616</span></div></div>
+        <div class="block"><h4>Electric motors and generators</h4><p>Winding RTDs (Pt100), bearing temperature, vibration, current and power, starts per hour and, for large machines, differential protection. The type of Ex protection drives accessories.</p><div class="chips" style="margin-top:10px"><span class="chip">API 541</span><span class="chip">API 546</span></div></div>
+        <div class="block"><h4>Gears, couplings, auxiliaries</h4><p>Gearbox bearings and vibration, lube oil consoles with pumps and filters, coolers, rundown tanks and seal oil systems.</p><div class="chips" style="margin-top:10px"><span class="chip">API 613</span><span class="chip">API 614</span></div></div>
+        <div class="block"><h4>Machinery protection</h4><p>A dedicated system monitors vibration and position, alarms and trips, and is separate from the control system.</p><div class="chips" style="margin-top:10px"><span class="chip">API 670</span><span class="chip">ISO 20816</span></div><p style="margin-top:10px"><a href="#monitoring">Protection and vibration</a></p></div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="types">
+        <h3 class="tt">Compressor types</h3>
+        <p class="intro">Typical instrumentation and control practice for the three compressor families. The vendor P&amp;ID, API datasheets and the client specification define the actual scope.</p>
+        <div class="tabs" role="tablist" aria-label="Compressor type" id="compTabs">
+          <button class="tab" role="tab" data-key="recip" aria-selected="true">Reciprocating</button>
+          <button class="tab" role="tab" data-key="screw" aria-selected="false">Screw</button>
+          <button class="tab" role="tab" data-key="centri" aria-selected="false">Centrifugal</button>
+        </div>
+        <div id="compBody"></div>
+      </div>
+    <div class="topic" data-topic="surge">
+        <h3 class="tt">Anti-surge</h3>
+        <p class="intro">Surge is flow reversal in a centrifugal compressor at low flow. The anti-surge controller opens the recycle valve to keep the operating point on the stable side of the surge control line. This is a schematic map for understanding, not a design tool.</p>
+        <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr))">
+          <div><svg class="map" id="asMap" viewBox="0 0 620 420" role="img" aria-label="Schematic compressor map with surge line, control line and operating point"></svg></div>
+          <div class="stackg">
+            <div class="block">
+              <div class="stackg">
+                <label class="f" for="asQ">Process flow demand: <b id="asQv">80%</b><input type="range" id="asQ" min="20" max="140" value="80"></label>
+                <label class="f" for="asH">Head required: <b id="asHv">95%</b><input type="range" id="asH" min="30" max="120" value="95"></label>
+                <label class="f" for="asM">Control line margin from surge: <b id="asMv">10%</b><input type="range" id="asM" min="5" max="20" value="10"></label>
+                <label class="f" style="display:flex; gap:10px; align-items:center; color:var(--ink)" for="asStuck"><input type="checkbox" id="asStuck"> Recycle valve stuck closed</label>
+              </div>
+            </div>
+            <div class="kpis" id="asKpi" aria-live="polite"></div>
+            <p id="asMsg" style="font-weight:500"></p>
+            <p class="note">A real controller runs a PI loop plus open-loop responses on a fast scan, using corrected (reduced) coordinates so the surge line follows gas properties, suction conditions and speed. Control line margins are set with the vendor.</p>
+          </div>
+        </div>
+      </div>
+
+    <div class="topic" data-topic="pumps" data-label="Pumps and seals" hidden>
+      <h3 class="tt">Pumps and seal plans</h3>
+      <p class="intro">Centrifugal pumps to API 610 are the most numerous machines in many plants. The mechanical seal and its support system are where most of the instruments live.</p>
+      <div class="block">
+        <h3>Typical instrumentation on a process pump</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Tag type</th><th>Measures</th><th>Why it matters</th></tr></thead><tbody>
+          <tr><td class="tagc">PT / PI</td><td>Suction and discharge pressure</td><td>Dry running, dead-heading and performance checks.</td></tr>
+          <tr><td class="tagc">FT / FSL</td><td>Discharge flow</td><td>Low flow protection and minimum flow valve control.</td></tr>
+          <tr><td class="tagc">LSL on suction vessel</td><td>Low level</td><td>Stops the pump before it runs dry.</td></tr>
+          <tr><td class="tagc">JT / II</td><td>Motor current or power</td><td>Dry run, overload and no-flow detection.</td></tr>
+          <tr><td class="tagc">TE</td><td>Bearing and seal temperature</td><td>Bearing distress and seal cooling.</td></tr>
+          <tr><td class="tagc">VT</td><td>Casing or shaft vibration</td><td>Cavitation, misalignment, bearing wear. Larger pumps use proximity probes per API 670.</td></tr>
+          <tr><td class="tagc">LT / PT</td><td>Seal pot level and pressure</td><td>Seal health in dual seal systems.</td></tr>
+          <tr><td class="tagc">AT / gas detector</td><td>Seal leakage</td><td>Early warning of hydrocarbon release on flammable services.</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="block">
+        <h3>API 682 seal plans, short list</h3>
+        <p class="muted" style="font-size:.9rem; margin:4px 0 12px">Piping plans for mechanical seals. Always check the standard and the pump datasheet for the exact plan and required instruments.</p>
+        <div class="tablewrap"><table><thead><tr><th>Plan</th><th>What it does</th><th>Instruments you may see</th></tr></thead><tbody>
+          <tr><td class="tagc">11</td><td>Recirculates from pump discharge through an orifice to the seal chamber.</td><td>Often none. Flow orifice, sometimes a temperature indicator.</td></tr>
+          <tr><td class="tagc">13</td><td>Recirculates from the seal chamber back to suction through an orifice, common on vertical pumps.</td><td>Orifice, sometimes a temperature indicator.</td></tr>
+          <tr><td class="tagc">21</td><td>Plan 11 with a cooler for hot fluids.</td><td>Temperature indicator on the cooled flush.</td></tr>
+          <tr><td class="tagc">23</td><td>A pumping ring circulates fluid through a cooler in a closed loop.</td><td>Temperature indicators and sometimes alarms.</td></tr>
+          <tr><td class="tagc">32</td><td>Clean external flush from another source.</td><td>Flow and pressure indication.</td></tr>
+          <tr><td class="tagc">52</td><td>Unpressurised buffer fluid reservoir for a dual seal, vented to a safe location.</td><td>Level and pressure transmitters or switches in the reservoir.</td></tr>
+          <tr><td class="tagc">53A / B / C</td><td>Pressurised barrier fluid for a dual seal. A: gas-pressurised reservoir. B: bladder accumulator. C: piston accumulator referenced to process pressure.</td><td>Pressure, level and temperature transmitters, with alarms on loss of barrier.</td></tr>
+          <tr><td class="tagc">54</td><td>Barrier fluid from an external pressurised system.</td><td>Flow, pressure and temperature of the supply.</td></tr>
+          <tr><td class="tagc">65</td><td>Detects leakage on the atmospheric side of the seal.</td><td>Leakage level switch or transmitter and flow orifice.</td></tr>
+          <tr><td class="tagc">72 / 74</td><td>Gas buffer or gas barrier systems for dry-running seals.</td><td>Gas supply pressure and flow, vent flow.</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="two">
+        <div class="block"><h3>Pump protection ideas</h3><ul class="dots" style="margin-top:10px">
+          <li>Minimum flow valve or recycle to prevent heating and vibration at low flow.</li>
+          <li>Trip on low suction level, low suction pressure or low flow with time delays.</li>
+          <li>Check valve on the discharge, with position confirmation where it is credited as a safeguard.</li>
+          <li>Standby pump auto-start on low discharge pressure or trip of the running pump.</li>
+          <li>Seal leak alarms that lead to controlled shutdown for toxic or flammable fluids.</li>
+        </ul></div>
+        <div class="block"><h3>Cavitation clues</h3><ul class="dots" style="margin-top:10px">
+          <li>Noise like gravel in the pump and unsteady discharge pressure.</li>
+          <li>Motor current and flow swinging with no change in demand.</li>
+          <li>Vibration at higher frequencies on the casing.</li>
+          <li>Confirm the NPSH margin (available above required) at the lowest suction level and highest temperature.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="monitoring" data-label="Protection and vibration" hidden>
+      <h3 class="tt">Machinery protection and vibration</h3>
+      <p class="intro">API 670 defines monitoring systems for critical rotating machines. They are independent of process control, with their own sensors, power supply and trip logic.</p>
+      <div class="block">
+        <h3>Typical measurements</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Measurement</th><th>Sensor</th><th>Purpose</th></tr></thead><tbody>
+          <tr><td><b>Radial shaft vibration</b></td><td>Two proximity probes per bearing, 90° apart (X-Y)</td><td>Rotor dynamics, unbalance, instability.</td></tr>
+          <tr><td><b>Axial position</b></td><td>Proximity probes facing the thrust collar</td><td>Thrust bearing wear and rotor movement.</td></tr>
+          <tr><td><b>Speed and phase</b></td><td>Keyphasor probe on a notch or key</td><td>Speed, overspeed and phase angle for diagnostics.</td></tr>
+          <tr><td><b>Bearing temperature</b></td><td>RTDs or thermocouples in the bearing metal</td><td>Bearing distress.</td></tr>
+          <tr><td><b>Casing vibration</b></td><td>Accelerometer or velocity sensor</td><td>Gearboxes, rolling element bearings, machines without proximity probes.</td></tr>
+          <tr><td><b>Overspeed</b></td><td>Independent speed probes, usually with voting</td><td>Prevents rotor burst.</td></tr>
+        </tbody></table></div>
+        <p class="src">Source: API 670. Alarm and trip setpoints, time delays and voting are agreed with the machine vendor and the client. Probes need a bypass and probe-fault philosophy.</p>
+      </div>
+      <div class="two">
+        <div class="block">
+          <h3>ISO 20816 evaluation zones</h3>
+          <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Zone</th><th>Meaning</th></tr></thead><tbody>
+            <tr><td><b>A</b></td><td>Vibration of newly commissioned machines.</td></tr>
+            <tr><td><b>B</b></td><td>Acceptable for unrestricted long-term operation.</td></tr>
+            <tr><td><b>C</b></td><td>Not satisfactory for long-term continuous operation. Usually the machine may run for a limited period.</td></tr>
+            <tr><td><b>D</b></td><td>Vibration severe enough to cause damage.</td></tr>
+          </tbody></table></div>
+          <p class="src">Source: ISO 20816 series. Zone boundaries depend on machine class and measurement type.</p>
+        </div>
+        <div class="block">
+          <h3>Practical notes</h3>
+          <ul class="dots" style="margin-top:10px">
+            <li>Use trends and baselines. A machine that is stable at a given level is often healthier than one that is changing at a lower level.</li>
+            <li>Alarm (alert) comes first, trip (danger) is higher and often needs two channels to agree to avoid spurious shutdowns.</li>
+            <li>Start-up and coast-down inhibit the trip while the machine passes critical speeds.</li>
+            <li>Probe gap voltage, runout and cable length are part of the sensor calibration, not an afterthought.</li>
+            <li>Keep machinery protection hardware independent of the SIS and DCS, and send only status and trends to the DCS.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="machinery"</script>
+<script src="common.js"></script>
+<script src="sound.js"></script>
+
+<script src="compressors.js"></script>
+<script src="surge.js"></script>
+<script>initViews();</script>
+</body></html>

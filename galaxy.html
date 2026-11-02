@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Galaxy · Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
+</head><body>
+<header id="topbar"></header>
+<main>
+<div class="wrap">
+
+  <div class="page-head">
+    <div><div class="label crumb">Galaxy</div><h1>Leave the <em>control room</em></h1></div>
+    <p>Every instrument engineer is a little curious about the biggest loop of all. Fly through the solar system, measure signal delays, and see how small a plant really is.</p>
+  </div>
+  <div class="views-bar"><div class="tabs" role="tablist" id="viewTabs" aria-label="Galaxy sections"></div></div>
+  <div id="views" class="view-pad">
+
+    <div class="topic" data-topic="solar" data-label="Solar system">
+      <h3 class="tt">Solar system orrery</h3>
+      <p class="intro">Planet positions are approximate for the date shown, using circular orbits from mean longitudes. Orbit sizes are compressed so Neptune and Pluto fit on screen, and planet sizes are exaggerated. Click a planet or pick one below.</p>
+      <div class="space-wrap">
+        <canvas id="orrery" role="img" aria-label="Animated map of the solar system. Use the planet buttons below the map to read about each world."></canvas>
+        <div class="orr-ctl">
+          <button class="btn sm" id="orrPlay" type="button">Pause</button>
+          <label for="orrSpeed">Speed<input type="range" id="orrSpeed" min="0" max="100" value="40"><span id="orrSpeedV" style="min-width:90px"></span></label>
+          <div class="seg" id="orrMode" style="margin:0" role="group" aria-label="Scale"><button type="button" data-m="whole" aria-pressed="true">Whole system</button><button type="button" data-m="inner" aria-pressed="false">Inner system</button></div>
+          <label for="orrLabels"><input type="checkbox" id="orrLabels" checked> Labels</label>
+          <button class="btn sm ghost" id="orrToday" type="button">Today</button>
+          <span class="simdate" id="orrDate"></span>
+        </div>
+      </div>
+      <div class="pchips" id="pChips" role="group" aria-label="Choose a world"></div>
+      <div class="dark-block">
+        <div id="pCard"></div>
+        <label class="f" for="myKg" style="max-width:240px; margin-top:14px; color:var(--deck-muted)">Your mass in kg<input type="number" id="myKg" value="70" min="1" max="300"></label>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="signal" data-label="Signal delay" hidden>
+      <h3 class="tt">How long does a signal take?</h3>
+      <p class="intro">Light covers 299,792 km every second. That is fast enough for a field cable and far too slow for anything beyond the Moon. Pick a destination and a vehicle.</p>
+      <div class="block">
+        <div class="row" style="max-width:720px; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))">
+          <label class="f" for="sdDest">Destination<select id="sdDest"></select></label>
+          <label class="f" for="sdSpeed">Vehicle<select id="sdSpeed"></select></label>
+        </div>
+        <div class="kpis" id="sdOut" style="margin-top:18px" aria-live="polite"></div>
+        <p id="sdNote" style="margin-top:14px; font-weight:500"></p>
+        <div class="photon" id="sdBar" aria-hidden="true"><i id="sdDot"></i></div>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap"><button class="btn sm" id="sdGo" type="button">Send a signal</button><span class="mono muted" id="sdClock" style="font-size:.85rem">t = 0 s</span></div>
+      </div>
+      <div class="block">
+        <h3>Why this matters to a controls engineer</h3>
+        <p class="muted" style="margin-top:6px; max-width:70ch">Delay between action and response is dead time. Loops with large dead time must be tuned slowly because the controller cannot see the effect of its last move. A Mars rover is the extreme case, so it is told what to do in batches and decides small things on its own.</p>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="scale" data-label="Cosmic scale" hidden>
+      <h3 class="tt">The ladder of distance</h3>
+      <p class="intro">Each bar is on a logarithmic scale, so every step to the right is ten times farther than the one before. Hover, tap or press Enter on a row for the story.</p>
+      <div class="block"><div class="ladder" id="ladder"></div></div>
+      <p class="src">Distances are rounded. The observable universe radius is the comoving distance. Voyager 1 distance is approximate for late 2026.</p>
+    </div>
+
+    <div class="topic" data-topic="milky" data-label="Milky Way" hidden>
+      <h3 class="tt">Our galaxy</h3>
+      <p class="intro">A schematic spiral. The real Milky Way is a barred spiral with a more complex arm structure, and we are inside it, so no one has a photo from outside.</p>
+      <div class="two" style="align-items:center; grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))">
+        <canvas class="mw" id="mw" role="img" aria-label="Schematic spiral map of the Milky Way with the Sun marked"></canvas>
+        <div class="stackg">
+          <div class="kpis">
+            <div class="kpi"><small>Width</small><b>~100,000 ly</b></div>
+            <div class="kpi"><small>Stars</small><b>100 to 400 billion</b></div>
+            <div class="kpi"><small>Sun from centre</small><b>~26,000 ly</b></div>
+            <div class="kpi"><small>Galactic year</small><b>225 to 250 Myr</b></div>
+          </div>
+          <ul class="dots">
+            <li>The Sun orbits the galactic centre at roughly 230 km/s. Since it formed, it has made about 20 laps.</li>
+            <li>At the centre is Sagittarius A*, a black hole with about 4 million times the mass of the Sun.</li>
+            <li>The nearest large galaxy, Andromeda, is about 2.5 million light-years away, and the observable universe holds on the order of a trillion or more galaxies.</li>
+            <li>Light from the centre of the Milky Way left about 26,000 years ago, before any city existed.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="mission" data-label="Mission control" hidden>
+      <h3 class="tt">Instrumentation, but farther away</h3>
+      <p class="intro">Spacecraft are control systems with the hardest possible operating conditions. A few parallels with the plant you work on.</p>
+      <div class="analogy">
+        <div class="block"><h4>Dead time</h4><p>A command to Mars arrives minutes later and the answer takes just as long to come back. Operators plan sequences and verify later, rather than closing a loop by hand.</p></div>
+        <div class="block"><h4>Thermal control</h4><p>The James Webb Space Telescope keeps its instruments at roughly 40 K (about −233 °C) using a five-layer sunshield, a passive temperature control design with no process fluid.</p></div>
+        <div class="block"><h4>Redundancy and voting</h4><p>Critical spacecraft functions have redundant sensors and computers and cross-check them, the same idea as 2oo3 voting on a plant trip.</p></div>
+        <div class="block"><h4>Safe mode is a trip</h4><p>When a spacecraft detects a fault it enters safe mode: it points at the Sun, switches to a minimum configuration and waits for instructions. That is a shutdown to a known safe state.</p></div>
+        <div class="block"><h4>Long service life</h4><p>Voyager 1 and 2, launched in 1977, are still sending data from beyond the heliosphere. Designing for decades with no maintenance visit is the ultimate proof test interval.</p></div>
+        <div class="block"><h4>Power from heat</h4><p>The Voyagers run on radioisotope thermoelectric generators, which turn the heat of decaying plutonium-238 into electricity using thermocouples. Seebeck's 1821 effect, still working in deep space.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="galaxy"</script>
+<script src="common.js"></script>
+<script src="sound.js"></script>
+
+<script src="galaxy.js"></script>
+<script>initViews();</script>
+</body></html>

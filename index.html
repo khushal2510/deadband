@@ -1,0 +1,145 @@
+<title>Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<header id="topbar"></header>
+<main id="top">
+<div class="wrap hero">
+  <div class="hero-copy">
+    <h1>Nothing needs to <em>respond</em> right now.</h1>
+    <div>
+      <p>Deadband is a quiet place for instrumentation and control engineers. Breathe, tune a loop, fly through the solar system, then pick up HAZOP, SIL, signals, valves and standards when you are ready.</p>
+      <div class="cta">
+        <a class="btn" href="unwind.html">Start unwinding</a>
+        <a class="btn ghost" href="galaxy.html">Leave the planet</a>
+      </div>
+    </div>
+  </div>
+  <figure class="scene-fig">
+    <div class="scene-box">
+      <svg id="scene" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustration of a gas compressor station with a flare stack, tanks and a lit compressor house. An engineer sits on a bench with a coffee. The sky changes with the time of day slider.">
+        <defs>
+          <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--s1)"/><stop offset=".55" style="stop-color:var(--s2)"/><stop offset="1" style="stop-color:var(--s3)"/></linearGradient>
+          <radialGradient id="orbG"><stop offset="0" style="stop-color:var(--orb);stop-opacity:.85"/><stop offset="1" style="stop-color:var(--orb);stop-opacity:0"/></radialGradient>
+          <radialGradient id="glowG"><stop offset="0" stop-color="#FFB46B" stop-opacity=".85"/><stop offset="1" stop-color="#FFB46B" stop-opacity="0"/></radialGradient>
+          <pattern id="fenceP" width="14" height="30" patternUnits="userSpaceOnUse"><rect x="0" y="0" width="3" height="30" style="fill:var(--plant)"/></pattern>
+        </defs>
+        <rect width="1600" height="640" fill="url(#skyG)"/>
+        <g class="stars" id="stars" style="opacity:var(--stars)"></g>
+        <circle id="orbGlow" r="170" fill="url(#orbG)" cx="900" cy="150"/>
+        <circle id="orbDisc" r="34" cx="900" cy="150" style="fill:var(--orb)"/>
+        <g class="cloud c1" style="fill:var(--cloud)"><ellipse cx="260" cy="130" rx="95" ry="22"/><ellipse cx="330" cy="116" rx="62" ry="20"/><ellipse cx="205" cy="122" rx="52" ry="16"/></g>
+        <g class="cloud c2" style="fill:var(--cloud)"><ellipse cx="700" cy="80" rx="120" ry="20"/><ellipse cx="770" cy="68" rx="70" ry="18"/></g>
+        <g class="cloud c3" style="fill:var(--cloud)"><ellipse cx="1000" cy="190" rx="80" ry="16"/><ellipse cx="1050" cy="180" rx="52" ry="14"/></g>
+        <path d="M0 470 C200 400 380 440 560 410 S900 360 1100 420 S1450 380 1600 430 V640 H0Z" style="fill:var(--hillF)"/>
+        <path d="M0 520 C260 470 500 500 760 480 S1200 450 1600 500 V640 H0Z" style="fill:var(--hillN)"/>
+
+        <!-- plant -->
+        <g style="fill:var(--plant)">
+          <rect x="110" y="498" width="900" height="6"/><rect x="110" y="512" width="900" height="5"/>
+          <rect x="140" y="498" width="6" height="50"/><rect x="330" y="498" width="6" height="50"/><rect x="520" y="498" width="6" height="50"/><rect x="960" y="498" width="6" height="50"/>
+          <rect x="190" y="430" width="140" height="118"/><ellipse cx="260" cy="430" rx="70" ry="12"/>
+          <rect x="350" y="456" width="100" height="92"/><ellipse cx="400" cy="456" rx="50" ry="9"/>
+          <rect x="500" y="300" width="44" height="248"/><ellipse cx="522" cy="300" rx="22" ry="8"/>
+          <rect x="494" y="360" width="56" height="4"/><rect x="494" y="420" width="56" height="4"/>
+          <rect x="570" y="384" width="26" height="164"/><ellipse cx="583" cy="384" rx="13" ry="5"/>
+          <polygon points="650,440 800,392 950,440"/><rect x="660" y="440" width="280" height="108"/>
+          <rect x="1000" y="352" width="20" height="196"/>
+          <rect x="1176" y="215" width="8" height="333"/>
+          <rect x="1090" y="440" width="6" height="108"/><rect x="1472" y="440" width="6" height="108"/><rect x="132" y="446" width="6" height="102"/>
+        </g>
+        <g style="fill:var(--lit)"><rect x="682" y="462" width="44" height="30" rx="2"/><rect x="746" y="462" width="44" height="30" rx="2"/><rect x="810" y="462" width="44" height="30" rx="2"/><rect x="874" y="462" width="44" height="30" rx="2"/></g>
+        <rect x="1120" y="545" width="1" height="1" fill="none"/>
+        <path d="M1350 548 L1366 250 L1382 548 M1355 480 H1377 M1358 410 H1374 M1361 340 H1371 M1352 520 L1377 480 L1356 410 L1373 340" stroke-width="3" fill="none" style="stroke:var(--plant)"/>
+        <circle class="blink" cx="1366" cy="246" r="5" fill="#FF4B3E"/>
+        <circle cx="1180" cy="215" r="130" fill="url(#glowG)" style="opacity:var(--flame)"/>
+        <g class="flame"><path d="M1180 148 C1165 178 1161 198 1180 217 C1199 198 1195 178 1180 148Z" fill="#FF9A3C"/><path d="M1180 172 C1173 188 1172 200 1180 214 C1188 200 1187 188 1180 172Z" fill="#FFE08A"/></g>
+        <circle class="steam" cx="1010" cy="346" r="11" style="fill:var(--steam)"/><circle class="steam s2" cx="1010" cy="346" r="11" style="fill:var(--steam)"/><circle class="steam s3" cx="1010" cy="346" r="11" style="fill:var(--steam)"/>
+        <g style="opacity:var(--lamp)"><circle cx="135" cy="446" r="62" fill="url(#glowG)"/><circle cx="1093" cy="440" r="62" fill="url(#glowG)"/><circle cx="1475" cy="440" r="62" fill="url(#glowG)"/></g>
+        <g style="fill:var(--lit)"><circle cx="135" cy="446" r="5"/><circle cx="1093" cy="440" r="5"/><circle cx="1475" cy="440" r="5"/></g>
+        <rect x="0" y="545" width="1600" height="95" style="fill:var(--ground)"/>
+        <rect x="0" y="552" width="1600" height="30" fill="url(#fenceP)" opacity=".85"/><rect x="0" y="552" width="1600" height="3" style="fill:var(--plant)"/>
+
+        <!-- engineer on a bench -->
+        <g style="fill:var(--plant)">
+          <rect x="52" y="596" width="150" height="8" rx="2"/><rect x="64" y="604" width="7" height="26"/><rect x="182" y="604" width="7" height="26"/>
+          <rect x="52" y="568" width="8" height="30" rx="2"/><rect x="52" y="568" width="60" height="6" rx="2"/>
+          <circle cx="110" cy="558" r="11"/><path d="M98 554 a12 10 0 0 1 24 0z"/>
+          <rect x="99" y="568" width="23" height="32" rx="9"/>
+          <rect x="108" y="592" width="46" height="9" rx="4"/><rect x="148" y="592" width="9" height="30" rx="4"/>
+          <rect x="128" y="576" width="22" height="7" rx="3" transform="rotate(-15 128 576)"/>
+        </g>
+        <rect x="145" y="566" width="9" height="11" rx="1.5" style="fill:var(--lit)"/>
+        <path class="cupsteam" d="M149 560 q-3 -6 0 -11 q3 -5 0 -10" stroke-width="2" stroke-linecap="round" fill="none" style="stroke:var(--steam)"/>
+      </svg>
+    </div>
+    <div class="time">
+      <label class="label" for="tod" style="white-space:nowrap">Time of day</label>
+      <div>
+        <input type="range" id="tod" min="0" max="100" value="62" aria-label="Time of day: dawn, day, dusk, night">
+        <div class="time-marks" aria-hidden="true"><button type="button" data-p="0">Dawn</button><button type="button" data-p="33">Day</button><button type="button" data-p="66">Dusk</button><button type="button" data-p="100">Night</button></div>
+      </div>
+    </div>
+  </figure>
+</div>
+
+<div class="wrap">
+<section id="pages" style="padding-top:clamp(28px,5vw,56px)">
+  <div class="sec-head">
+    <h2>Where to <em>next</em></h2>
+    <p>Half of this site is for resting and half is for work. Both are useful on a Thursday afternoon.</p>
+  </div>
+  <div class="tiles">
+    <a class="tile wide" href="unwind.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="44" fill="none" stroke="var(--line)" stroke-width="2"/><path d="M26 74 A38 38 0 0 1 94 74" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/><line x1="60" y1="64" x2="82" y2="42" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="64" r="6" fill="var(--ink)"/></svg>
+      <div class="label">Rest</div><h3>Unwind</h3>
+      <p>Break timer, breathing gauge, plant ambience, a tank to keep calm, a loop to tune and a quiz with no stakes.</p><span class="go">Take a break</span>
+    </a>
+    <a class="tile wide space" href="galaxy.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="9" fill="#FFC85A"/><circle cx="60" cy="60" r="22" fill="none" stroke="#3A4580"/><circle cx="60" cy="60" r="38" fill="none" stroke="#3A4580"/><circle cx="60" cy="60" r="54" fill="none" stroke="#3A4580"/><g class="orb-spin"><circle cx="82" cy="60" r="4" fill="#5B9BE8"/></g><g class="orb-spin s2"><circle cx="98" cy="60" r="5" fill="#D9B38C"/></g><g class="orb-spin s3"><circle cx="114" cy="60" r="3" fill="#9ADBE0"/></g></svg>
+      <div class="label">Explore</div><h3>Galaxy</h3>
+      <p>A live orrery of the solar system, signal delay to the planets, the scale of the cosmos and a map of the Milky Way.</p><span class="go">Leave the control room</span>
+    </a>
+    <a class="tile" href="field.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><path d="M6 78 C26 20 40 110 60 60 S92 40 114 70" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><line x1="6" y1="96" x2="114" y2="96" stroke="var(--line)" stroke-width="2"/></svg>
+      <div class="label">Learn</div><h3>Field guide</h3>
+      <p>How sensors, signals and valves work, plus calculators for scaling, DP level, flow, Cv and loop power.</p><span class="go">Open the guide</span>
+    </a>
+    <a class="tile" href="safety.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="48" fill="none" stroke="var(--line)" stroke-width="3"/><circle cx="60" cy="60" r="34" fill="none" stroke="var(--sky)" stroke-width="3"/><circle cx="60" cy="60" r="20" fill="none" stroke="var(--accent)" stroke-width="3"/><circle cx="60" cy="60" r="7" fill="var(--bad)"/></svg>
+      <div class="label">Protect</div><h3>Safety</h3>
+      <p>HAZOP, risk matrix, SIL and PFD, LOPA, hazardous areas and alarm management.</p><span class="go">Layers of protection</span>
+    </a>
+    <a class="tile" href="machinery.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="26" fill="none" stroke="var(--ink)" stroke-width="3"/><circle cx="60" cy="60" r="8" fill="var(--accent)"/><g stroke="var(--ink)" stroke-width="8" stroke-linecap="round"><line x1="60" y1="22" x2="60" y2="14"/><line x1="60" y1="98" x2="60" y2="106"/><line x1="22" y1="60" x2="14" y2="60"/><line x1="98" y1="60" x2="106" y2="60"/><line x1="33" y1="33" x2="27" y2="27"/><line x1="87" y1="87" x2="93" y2="93"/><line x1="87" y1="33" x2="93" y2="27"/><line x1="33" y1="87" x2="27" y2="93"/></g></svg>
+      <div class="label">Rotating</div><h3>Machinery</h3>
+      <p>Compressors, anti-surge, pumps and seal plans, plus machinery protection and vibration.</p><span class="go">Open the machine shop</span>
+    </a>
+    <a class="tile wide" href="desk.html">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><rect x="30" y="20" width="56" height="74" rx="6" fill="var(--surface-2)" stroke="var(--line)" stroke-width="2"/><rect x="40" y="30" width="56" height="74" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><g stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><line x1="50" y1="52" x2="86" y2="52"/><line x1="50" y1="64" x2="80" y2="64"/><line x1="50" y1="76" x2="84" y2="76"/></g></svg>
+      <div class="label">Work</div><h3>Desk</h3>
+      <p>The deliverables checklist, project workflow from FEED to handover, standards shelf, glossary and tag decoder.</p><span class="go">Clear the desk</span>
+    </a>
+    <a class="tile wide" href="unwind.html#timer">
+      <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="40" fill="none" stroke="var(--surface-2)" stroke-width="10"/><path d="M60 20 A40 40 0 1 1 25 80" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round"/></svg>
+      <div class="label">Right now</div><h3>Five-minute break</h3>
+      <p>Start a timer, put the document down and look at something far away.</p><span class="go">Start timer</span>
+    </a>
+  </div>
+</section>
+
+<div class="fact">
+  <div><div class="label" style="margin-bottom:10px">Fact of the day</div><button class="btn ghost sm" id="factBtn" type="button">Another one</button></div>
+  <p class="quote" id="factText" aria-live="polite"></p>
+</div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="home"</script>
+<script src="common.js"></script>
+<script src="scene.js"></script>
+<script src="facts.js"></script>
+<script src="sound.js"></script>

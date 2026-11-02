@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Safety · Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
+</head><body>
+<header id="topbar"></header>
+<main>
+<div class="wrap">
+
+  <div class="page-head">
+    <div><div class="label crumb">Safety</div><h1>Layers that <em>hold</em></h1></div>
+    <p>Process safety for instrumentation engineers: how hazards are found, how risk is judged, how a safety function earns its SIL, and how alarms stay useful.</p>
+  </div>
+  <div class="views-bar"><div class="tabs" role="tablist" id="viewTabs" aria-label="Safety sections"></div></div>
+  <div id="views" class="view-pad">
+
+    <div class="topic" data-topic="hazop" data-label="HAZOP and risk">
+      <h3 class="tt">HAZOP and risk ranking</h3>
+      <p class="intro">A HAZOP walks each P&amp;ID node with guide words on process parameters. For the I&amp;C engineer the useful output is every new instrument, setpoint, trip or SIL candidate that falls out of the room.</p>
+      <div class="two">
+        <div class="block">
+          <h3>Guide words (IEC 61882)</h3>
+          <div class="tablewrap" style="margin-top:10px"><table><tbody>
+            <tr><td class="tagc">No / Not</td><td>Complete negation of the design intent</td></tr>
+            <tr><td class="tagc">More / Less</td><td>Quantitative increase or decrease</td></tr>
+            <tr><td class="tagc">As well as</td><td>Something extra happens in addition</td></tr>
+            <tr><td class="tagc">Part of</td><td>Only part of the intent is achieved</td></tr>
+            <tr><td class="tagc">Reverse</td><td>Logical opposite of the intent</td></tr>
+            <tr><td class="tagc">Other than</td><td>Complete substitution</td></tr>
+          </tbody></table></div>
+          <p class="src">Source: IEC 61882, HAZOP studies, application guide.</p>
+        </div>
+        <div class="block">
+          <h3>Risk matrix (5 × 5)</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 10px">Tap a cell. Every company has its own matrix, so load the client's into the study.</p>
+          <div style="overflow-x:auto"><table class="rm" id="rmTable" aria-label="Risk matrix"></table></div>
+          <p id="rmOut" style="margin-top:10px; font-weight:500" aria-live="polite">Pick a cell.</p>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Deviation builder</h3>
+        <p class="muted" style="font-size:.92rem; margin:4px 0 14px">Illustrative examples to start a discussion. A real study works from the actual P&amp;ID, fluid properties and operating modes.</p>
+        <div class="row" style="max-width:520px">
+          <label class="f" for="hzParam">Parameter<select id="hzParam"><option value="flow">Flow</option><option value="pressure" selected>Pressure</option><option value="temp">Temperature</option><option value="level">Level</option><option value="comp">Composition</option><option value="vib">Vibration</option></select></label>
+          <label class="f" for="hzWord">Guide word<select id="hzWord"><option value="no">No</option><option value="more" selected>More</option><option value="less">Less</option><option value="aswell">As well as</option><option value="part">Part of</option><option value="reverse">Reverse</option><option value="other">Other than</option></select></label>
+        </div>
+        <div id="hzOut" style="margin-top:16px"></div>
+      </div>
+      <div class="block">
+        <h3>What to carry out of the room</h3>
+        <ul class="dots" style="margin-top:10px">
+          <li>The action list, each item traced to a datasheet change, tag, I/O point or logic change.</li>
+          <li>Safeguards that are instrumented, so they appear in the C&amp;E matrix and the SIL study scope.</li>
+          <li>Setpoints agreed in the room, recorded in the alarm and trip schedule with the reasoning.</li>
+          <li>Assumptions about bypasses, overrides and start-up inhibits.</li>
+          <li>Scenarios parked for LOPA, with the node and scenario number kept.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="topic" data-topic="sil">
+        <h3 class="tt">SIL and SIF</h3>
+        <p class="intro">IEC 61508 and IEC 61511 define how a safety instrumented function earns its SIL. Use the tables for reference and the calculator for a screening check.</p>
+        <div class="tabs" role="tablist" aria-label="SIL topics" id="silTabs">
+          <button class="tab" role="tab" data-key="calc" aria-selected="true">PFD calculator</button>
+          <button class="tab" role="tab" data-key="tables" aria-selected="false">SIL tables</button>
+          <button class="tab" role="tab" data-key="life" aria-selected="false">Lifecycle</button>
+          <button class="tab" role="tab" data-key="sifs" aria-selected="false">Common SIFs</button>
+        </div>
+        <div data-sp="calc">
+          <div class="two">
+            <div class="block">
+              <h3>Loop inputs</h3>
+              <p class="muted" style="font-size:.9rem; margin:4px 0 14px">λDU is the dangerous undetected failure rate in FIT (failures per 10⁹ hours). Defaults are example values. Use certified data from the safety manual.</p>
+              <div class="stackg">
+                <div id="silRows" class="stackg"></div>
+                <label class="f" for="silTI">Proof test interval (years)<input type="number" id="silTI" min="0.25" max="20" step="0.25" value="1"></label>
+              </div>
+            </div>
+            <div class="block">
+              <h3>Result</h3>
+              <div class="out" id="silOut" style="margin-top:10px" aria-live="polite"></div>
+              <div style="margin-top:16px" class="stackg" id="silShare"></div>
+              <p class="note" style="margin-top:14px">Screening only. Repair time, diagnostics, proof test coverage, partial stroke testing and architectural constraints (SFF, HFT) are not included. Verify with the vendor safety manual and a full calculation.</p>
+            </div>
+          </div>
+        </div>
+        <div data-sp="tables" hidden>
+          <div class="two">
+            <div class="block">
+              <h3>Low demand mode</h3>
+              <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>SIL</th><th>PFDavg</th><th>RRF</th></tr></thead><tbody>
+                <tr><td>SIL 1</td><td class="tagc">≥10⁻² to &lt;10⁻¹</td><td>10 to 100</td></tr>
+                <tr><td>SIL 2</td><td class="tagc">≥10⁻³ to &lt;10⁻²</td><td>100 to 1,000</td></tr>
+                <tr><td>SIL 3</td><td class="tagc">≥10⁻⁴ to &lt;10⁻³</td><td>1,000 to 10,000</td></tr>
+                <tr><td>SIL 4</td><td class="tagc">≥10⁻⁵ to &lt;10⁻⁴</td><td>10,000 to 100,000</td></tr>
+              </tbody></table></div>
+              <p class="src">RRF = 1 / PFDavg. Source: IEC 61508-1 and IEC 61511-1, target failure measures.</p>
+            </div>
+            <div class="block">
+              <h3>High demand or continuous mode</h3>
+              <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>SIL</th><th>PFH (per hour)</th></tr></thead><tbody>
+                <tr><td>SIL 1</td><td class="tagc">≥10⁻⁶ to &lt;10⁻⁵</td></tr>
+                <tr><td>SIL 2</td><td class="tagc">≥10⁻⁷ to &lt;10⁻⁶</td></tr>
+                <tr><td>SIL 3</td><td class="tagc">≥10⁻⁸ to &lt;10⁻⁷</td></tr>
+                <tr><td>SIL 4</td><td class="tagc">≥10⁻⁹ to &lt;10⁻⁸</td></tr>
+              </tbody></table></div>
+              <p class="src">Source: IEC 61508-1 and IEC 61511-1, target failure measures.</p>
+            </div>
+          </div>
+          <div class="block">
+            <h3>Architectural constraints, Route 1H</h3>
+            <p class="muted" style="font-size:.9rem; margin:4px 0 12px">Maximum SIL a subsystem can claim from its safe failure fraction (SFF) and hardware fault tolerance (HFT). Type A has simple, well-defined failure modes. Type B has complex components such as microprocessors.</p>
+            <div class="tablewrap"><table><thead><tr><th>SFF</th><th>A, HFT 0</th><th>A, HFT 1</th><th>A, HFT 2</th><th>B, HFT 0</th><th>B, HFT 1</th><th>B, HFT 2</th></tr></thead><tbody>
+              <tr><td>&lt;60%</td><td>SIL 1</td><td>SIL 2</td><td>SIL 3</td><td>Not allowed</td><td>SIL 1</td><td>SIL 2</td></tr>
+              <tr><td>60% to &lt;90%</td><td>SIL 2</td><td>SIL 3</td><td>SIL 4</td><td>SIL 1</td><td>SIL 2</td><td>SIL 3</td></tr>
+              <tr><td>90% to &lt;99%</td><td>SIL 3</td><td>SIL 4</td><td>SIL 4</td><td>SIL 2</td><td>SIL 3</td><td>SIL 4</td></tr>
+              <tr><td>≥99%</td><td>SIL 3</td><td>SIL 4</td><td>SIL 4</td><td>SIL 3</td><td>SIL 4</td><td>SIL 4</td></tr>
+            </tbody></table></div>
+            <p class="src">Source: IEC 61508-2, architectural constraints (Route 1H). IEC 61511-1 gives separate requirements for field devices, so confirm the edition and route accepted on the project.</p>
+          </div>
+          <div class="block">
+            <h3>Simplified PFDavg equations used by the calculator</h3>
+            <div class="stackg" style="margin-top:10px">
+              <div class="formula">1oo1: PFD = λDU × TI / 2</div>
+              <div class="formula">1oo2: PFD = ((1−β) λDU TI)² / 3 + β λDU TI / 2</div>
+              <div class="formula">2oo2: PFD = λDU × TI</div>
+              <div class="formula">2oo3: PFD = ((1−β) λDU TI)² + β λDU TI / 2</div>
+            </div>
+            <p class="src">Source: simplified formulas derived as in IEC 61508-6 and ISA-TR84.00.02 with the beta common-cause model, neglecting repair time and diagnostics. β is the common-cause fraction of dangerous undetected failures, taken from the vendor or a checklist such as IEC 61508-6 Annex D.</p>
+          </div>
+        </div>
+        <div data-sp="life" hidden>
+          <div class="two">
+            <div class="block">
+              <h3>Safety lifecycle</h3>
+              <ol class="life" style="margin-top:12px">
+                <li><div><b>Hazard and risk assessment</b><p class="muted">Find where a SIF is needed and the risk reduction it must deliver.</p></div></li>
+                <li><div><b>Allocation of safety functions</b><p class="muted">Decide which protection layers carry which risk reduction.</p></div></li>
+                <li><div><b>Safety requirements specification</b><p class="muted">Function, setpoints, response time, voting, safe state, SIL.</p></div></li>
+                <li><div><b>Design and engineering of the SIS</b><p class="muted">Select devices and architecture, verify the SIL.</p></div></li>
+                <li><div><b>Installation, commissioning and validation</b><p class="muted">FAT, SAT and end-to-end proof against the SRS.</p></div></li>
+                <li><div><b>Operation and maintenance</b><p class="muted">Proof tests, bypass control, demand and failure records.</p></div></li>
+                <li><div><b>Modification</b><p class="muted">Management of change returns to the right lifecycle step.</p></div></li>
+                <li><div><b>Decommissioning</b><p class="muted">Remove the function in a controlled way.</p></div></li>
+              </ol>
+              <p class="src">Source: IEC 61511-1 safety lifecycle. Functional safety management, verification and assessment apply throughout.</p>
+            </div>
+            <div class="block">
+              <h3>What an SRS holds per SIF</h3>
+              <ul class="dots" style="margin-top:12px">
+                <li>SIF ID, the hazardous event it prevents and the link to the HAZOP and LOPA scenario.</li>
+                <li>Required SIL, mode of operation and expected demand rate.</li>
+                <li>Process safety time and required response time, including valve stroke.</li>
+                <li>Trip setpoint, units, delay and measurement basis.</li>
+                <li>Safe state, de-energise or energise to trip, and reset philosophy.</li>
+                <li>Voting and architecture of sensors, logic solver and final elements.</li>
+                <li>Proof test interval and method, bypass and maintenance override rules.</li>
+                <li>Environmental limits and the requirements for diagnostics and fault alarms.</li>
+              </ul>
+              <p class="src">Source: IEC 61511-1 clause on safety requirements specification.</p>
+            </div>
+          </div>
+        </div>
+        <div data-sp="sifs" hidden>
+          <div class="block">
+            <h3>SIFs commonly identified in process plants</h3>
+            <p class="muted" style="font-size:.9rem; margin:4px 0 12px">Starting vocabulary only. Whether a function is a SIF, and at what SIL, comes from the project risk assessment and LOPA, not from this list.</p>
+            <div class="tablewrap"><table><thead><tr><th>Function</th><th>Typical initiator</th><th>Typical final element</th></tr></thead><tbody>
+              <tr><td>High-high level (tank or vessel overfill)</td><td>Level switch or transmitter</td><td>Inlet isolation valve or pump trip</td></tr>
+              <tr><td>High-high pressure</td><td>Pressure transmitters</td><td>Feed isolation, heat source trip</td></tr>
+              <tr><td>High-high temperature</td><td>Temperature sensors</td><td>Fuel or heat source shutoff</td></tr>
+              <tr><td>Low-low flow</td><td>Flow transmitter</td><td>Pump or heater trip</td></tr>
+              <tr><td>Burner flame failure</td><td>Flame detectors</td><td>Fuel gas block valves</td></tr>
+              <tr><td>Rotating equipment high-high vibration or overspeed</td><td>Machinery protection probes</td><td>Driver trip, ESD valves</td></tr>
+              <tr><td>Gas detection (fire and gas)</td><td>Gas or flame detectors, voted</td><td>ESD, ventilation, alarms</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+      </div>
+    <div class="topic" data-topic="lopa">
+        <h3 class="tt">LOPA</h3>
+        <p class="intro">Layer of protection analysis estimates whether the protection layers already in place bring an initiating event down to the tolerable frequency, and how much more risk reduction is needed.</p>
+        <div class="two">
+          <div class="block">
+            <h3>Scenario</h3>
+            <div class="stackg" style="margin-top:12px">
+              <label class="f" for="lpIE">Initiating event
+                <select id="lpIE">
+                  <option value="0.1" selected>BPCS instrument loop failure (0.1 per year)</option>
+                  <option value="0.1">Cooling water failure (0.1 per year)</option>
+                  <option value="0.1">Pump seal failure (0.1 per year)</option>
+                  <option value="0.01">Operator failure, per opportunity (0.01)</option>
+                  <option value="custom">Other, enter your own frequency</option>
+                </select></label>
+              <label class="f" for="lpIEc">Own frequency (per year), used when Other is selected<input type="number" id="lpIEc" min="0" step="any" value="0.1"></label>
+              <div class="row">
+                <label class="f" for="lpIgn">P(ignition)<select id="lpIgn"><option value="1">1</option><option value="0.5">0.5</option><option value="0.1" selected>0.1</option><option value="0.01">0.01</option></select></label>
+                <label class="f" for="lpOcc">P(person present)<select id="lpOcc"><option value="1">1</option><option value="0.5" selected>0.5</option><option value="0.25">0.25</option><option value="0.1">0.1</option></select></label>
+                <label class="f" for="lpFat">P(fatal injury)<select id="lpFat"><option value="1">1</option><option value="0.5" selected>0.5</option><option value="0.1">0.1</option></select></label>
+              </div>
+              <label class="f" for="lpTg">Tolerable frequency (per year)
+                <input type="number" id="lpTg" min="0" step="any" value="0.00001"></label>
+              <div class="chips" id="lpPresets"></div>
+              <h4 style="margin-top:6px">Independent protection layers</h4>
+              <div class="checks" id="lpIPL"></div>
+              <label class="f" for="lpCustom">Other IPL, PFD (1 means none)<input type="number" id="lpCustom" min="0.0001" max="1" step="any" value="1"></label>
+            </div>
+            <p class="src">Typical values: Crowl and Louvar, Chemical Process Safety (2019), and the CCPS LOPA method. Your company LOPA procedure and risk criteria take priority. The tolerable frequency presets are examples only.</p>
+          </div>
+          <div class="block">
+            <h3>Result</h3>
+            <div class="formula" style="margin:10px 0 14px">f = IE × P(ign) × P(occ) × P(fatal) × Π PFD</div>
+            <div class="out" id="lpOut" aria-live="polite"></div>
+            <div class="logbar" aria-hidden="true"><div class="track"></div><div class="mk ie" id="mkIE">IE</div><div class="mk mit" id="mkMit">Mitigated</div><div class="mk tg" id="mkTg">Target</div></div>
+            <div class="logscale" aria-hidden="true"><span>10⁻⁸</span><span>10⁻⁶</span><span>10⁻⁴</span><span>10⁻²</span><span>1 /yr</span></div>
+            <p class="note" style="margin-top:14px">An IPL must be independent, specific, dependable and auditable. Do not take BPCS credit when the BPCS loop is the initiating cause. Operator response needs a dedicated alarm and enough time to act.</p>
+          </div>
+        </div>
+      </div>
+    <div class="topic" data-topic="ex">
+        <h3 class="tt">Hazardous areas</h3>
+        <p class="intro">Check that an Ex marking suits an area and gas, and run the entity check every intrinsically safe loop needs.</p>
+        <div class="two">
+          <div class="block">
+            <h3>Marking checker</h3>
+            <div class="stackg" style="margin-top:12px">
+              <div class="row">
+                <label class="f" for="exProt">Protection concept
+                  <select id="exProt">
+                    <option value="db" selected>Ex db flameproof</option><option value="eb">Ex eb increased safety</option><option value="ia">Ex ia intrinsic safety</option>
+                    <option value="ib">Ex ib intrinsic safety</option><option value="ic">Ex ic intrinsic safety</option><option value="mb">Ex mb encapsulation</option>
+                    <option value="pxb">Ex pxb pressurised</option><option value="pzc">Ex pzc pressurised</option><option value="ec">Ex ec non-sparking</option><option value="da">Ex da flameproof</option><option value="ma">Ex ma encapsulation</option>
+                  </select></label>
+                <label class="f" for="exGrp">Gas group on the marking<select id="exGrp"><option value="1">IIA</option><option value="2" selected>IIB</option><option value="3">IIC</option></select></label>
+                <label class="f" for="exT">Temperature class<select id="exT"><option value="450">T1 (450 °C)</option><option value="300">T2 (300 °C)</option><option value="200">T3 (200 °C)</option><option value="135" selected>T4 (135 °C)</option><option value="100">T5 (100 °C)</option><option value="85">T6 (85 °C)</option></select></label>
+              </div>
+              <h4>The area</h4>
+              <div class="row">
+                <label class="f" for="exZone">Zone<select id="exZone"><option value="0">Zone 0</option><option value="1" selected>Zone 1</option><option value="2">Zone 2</option></select></label>
+                <label class="f" for="exGas">Gas
+                  <select id="exGas"><option value="1|537">Methane (IIA, AIT 537 °C)</option><option value="1|470">Propane (IIA, AIT 470 °C)</option><option value="2|425" selected>Ethylene (IIB, AIT 425 °C)</option><option value="3|560">Hydrogen (IIC, AIT 560 °C)</option><option value="3|305">Acetylene (IIC, AIT 305 °C)</option></select></label>
+              </div>
+              <div class="out" id="exOut" aria-live="polite"></div>
+              <p class="note">The EPL follows from the protection concept. Types with no gas subdivision (e, m, p, ec) are marked Group II only. Use the project area classification drawing and actual gas data, and add margin to AIT if the client specification requires it.</p>
+            </div>
+            <p class="src">Source: IEC 60079-0 (EPL, temperature classes), IEC 60079-20-1 (gas group and AIT data).</p>
+          </div>
+          <div class="block">
+            <h3>Intrinsic safety entity check</h3>
+            <p class="muted" style="font-size:.9rem; margin:4px 0 14px">Safe-area barrier or isolator against field device and cable. Defaults are example values.</p>
+            <div class="stackg">
+              <h4>Barrier output</h4>
+              <div class="row">
+                <label class="f" for="isUo">Uo (V)<input type="number" id="isUo" value="28" step="any"></label>
+                <label class="f" for="isIo">Io (mA)<input type="number" id="isIo" value="93" step="any"></label>
+                <label class="f" for="isPo">Po (W)<input type="number" id="isPo" value="0.65" step="any"></label>
+                <label class="f" for="isCo">Co (µF)<input type="number" id="isCo" value="0.083" step="any"></label>
+                <label class="f" for="isLo">Lo (mH)<input type="number" id="isLo" value="3.9" step="any"></label>
+              </div>
+              <h4>Field device input</h4>
+              <div class="row">
+                <label class="f" for="isUi">Ui (V)<input type="number" id="isUi" value="30" step="any"></label>
+                <label class="f" for="isIi">Ii (mA)<input type="number" id="isIi" value="100" step="any"></label>
+                <label class="f" for="isPi">Pi (W)<input type="number" id="isPi" value="0.75" step="any"></label>
+                <label class="f" for="isCi">Ci (nF)<input type="number" id="isCi" value="5" step="any"></label>
+                <label class="f" for="isLi">Li (µH)<input type="number" id="isLi" value="10" step="any"></label>
+              </div>
+              <h4>Cable</h4>
+              <div class="row">
+                <label class="f" for="isCc">Cable C (pF/m)<input type="number" id="isCc" value="150" step="any"></label>
+                <label class="f" for="isLc">Cable L (µH/m)<input type="number" id="isLc" value="1" step="any"></label>
+                <label class="f" for="isLen">Length (m)<input type="number" id="isLen" value="300" step="any"></label>
+              </div>
+              <div class="tablewrap"><table><tbody id="isOut"></tbody></table></div>
+            </div>
+            <p class="src">Source: IEC 60079-14 and IEC 60079-25 entity concept. Use certified parameters from the barrier and device certificates and the control drawing.</p>
+          </div>
+        </div>
+        <div class="two" style="margin-top:16px">
+          <div class="block">
+            <h3>Zones for gas</h3>
+            <div class="tablewrap" style="margin-top:10px"><table><tbody>
+              <tr><td><b>Zone 0</b></td><td>Explosive gas atmosphere present continuously, for long periods or frequently. Needs EPL Ga.</td></tr>
+              <tr><td><b>Zone 1</b></td><td>Likely to occur occasionally in normal operation. EPL Gb or Ga.</td></tr>
+              <tr><td><b>Zone 2</b></td><td>Not likely in normal operation and, if it occurs, only for a short period. EPL Gc, Gb or Ga.</td></tr>
+            </tbody></table></div>
+            <p class="src">Source: IEC 60079-10-1 definitions and IEC 60079-0 EPL.</p>
+          </div>
+          <div class="block">
+            <h3>Temperature classes</h3>
+            <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Class</th><th>Max surface temp.</th></tr></thead><tbody>
+              <tr><td>T1</td><td>450 °C</td></tr><tr><td>T2</td><td>300 °C</td></tr><tr><td>T3</td><td>200 °C</td></tr><tr><td>T4</td><td>135 °C</td></tr><tr><td>T5</td><td>100 °C</td></tr><tr><td>T6</td><td>85 °C</td></tr>
+            </tbody></table></div>
+            <p class="src">Source: IEC 60079-0.</p>
+          </div>
+        </div>
+      </div>
+    <div class="topic" data-topic="alarms">
+        <h3 class="tt">Alarm management</h3>
+        <p class="intro">ISA-18.2 (IEC 62682) treats alarms as a lifecycle, so the setpoints you write in the alarm schedule end up in a managed system.</p>
+        <div class="two">
+          <div class="block">
+            <h3>Lifecycle stages</h3>
+            <ol class="life" style="margin-top:12px">
+              <li><div><b>Philosophy</b></div></li><li><div><b>Identification</b></div></li><li><div><b>Rationalization</b></div></li><li><div><b>Detailed design</b></div></li><li><div><b>Implementation</b></div></li>
+              <li><div><b>Operation</b></div></li><li><div><b>Maintenance</b></div></li><li><div><b>Monitoring and assessment</b></div></li><li><div><b>Management of change</b></div></li><li><div><b>Audit</b></div></li>
+            </ol>
+            <p class="src">Source: ISA-18.2 / IEC 62682 lifecycle model.</p>
+          </div>
+          <div class="block">
+            <h3>Practical points</h3>
+            <ul class="dots" style="margin-top:12px">
+              <li>An alarm should signal a condition that needs an operator response, with a known consequence and enough time to act.</li>
+              <li>Every alarm needs a priority, setpoint, delay and a deadband so it does not chatter around the limit.</li>
+              <li>Alarms and trips are different things. A trip setpoint is normally further out than the alarm that warns of it.</li>
+              <li>Watch for alarm floods. A common definition is more than 10 alarms in 10 minutes for one operator.</li>
+              <li>Shelving, suppression and out-of-service states need clear rules and records.</li>
+            </ul>
+            <p class="src">Sources: ISA-18.2, EEMUA 191.</p>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="safety"</script>
+<script src="common.js"></script>
+<script src="sound.js"></script>
+
+<script src="risk.js"></script>
+<script src="sil.js"></script>
+<script src="lopa.js"></script>
+<script src="ex.js"></script>
+<script src="is.js"></script>
+<script>initViews();</script>
+</body></html>

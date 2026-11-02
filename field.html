@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Field guide · Deadband</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
+</head><body>
+<header id="topbar"></header>
+<main>
+<div class="wrap">
+
+  <div class="page-head">
+    <div><div class="label crumb">Field guide</div><h1>How the plant <em>feels</em> and <em>moves</em></h1></div>
+    <p>General instrumentation practice that applies to any process plant: sensors, signals, valves and loops, with calculators for the numbers you reach for every week.</p>
+  </div>
+  <div class="views-bar"><div class="tabs" role="tablist" id="viewTabs" aria-label="Field guide sections"></div></div>
+  <div id="views" class="view-pad">
+
+    <div class="topic" data-topic="measure" data-label="Measurement">
+      <h3 class="tt">What to measure with</h3>
+      <p class="intro">Pick a variable to compare the common technologies, what each is good at and where it bites. Selection always starts with the fluid, the conditions and the required accuracy.</p>
+      <div class="tabs" role="tablist" id="measTabs" aria-label="Variable">
+        <button class="tab" role="tab" data-key="pressure" aria-selected="true">Pressure</button>
+        <button class="tab" role="tab" data-key="temperature" aria-selected="false">Temperature</button>
+        <button class="tab" role="tab" data-key="flow" aria-selected="false">Flow</button>
+        <button class="tab" role="tab" data-key="level" aria-selected="false">Level</button>
+        <button class="tab" role="tab" data-key="analysis" aria-selected="false">Analysis</button>
+        <button class="tab" role="tab" data-key="position" aria-selected="false">Vibration and position</button>
+      </div>
+      <div id="measBody" class="stackv"></div>
+    </div>
+
+    <div class="topic" data-topic="calc" data-label="Calculators" hidden>
+      <h3 class="tt">Calculators</h3>
+      <p class="intro">Quick checks for everyday numbers. They use standard equations and ignore many real-world effects, so use them to sanity check, not to replace a datasheet or a sizing tool.</p>
+      <div class="calc-grid">
+        <div class="block">
+          <h3>4–20 mA scaler</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 14px">Type in any field and the others follow.</p>
+          <div class="stackg">
+            <div class="row"><label class="f" for="scLrv">LRV (0%)<input type="number" id="scLrv" value="0" step="any"></label><label class="f" for="scUrv">URV (100%)<input type="number" id="scUrv" value="10" step="any"></label></div>
+            <div class="row"><label class="f" for="scMa">Signal (mA)<input type="number" id="scMa" value="12" step="any"></label><label class="f" for="scPct">Percent of span<input type="number" id="scPct" step="any"></label><label class="f" for="scEng">Process value<input type="number" id="scEng" step="any"></label></div>
+            <div class="zones" id="scZones" aria-hidden="true"><div class="z1">fail low</div><div class="z2">under</div><div class="z3">measuring range</div><div class="z4">over</div><div class="z5">fail high</div></div>
+            <p id="scNote" class="note"></p>
+          </div>
+        </div>
+        <div class="block">
+          <h3>DP level range</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 14px">Open tank or dry-leg closed vessel, transmitter connected to the bottom tap.</p>
+          <div class="stackg">
+            <div class="row"><label class="f" for="dlRho">Density (kg/m³)<input type="number" id="dlRho" value="1000" step="any"></label><label class="f" for="dlElev">Transmitter below lower tap (m)<input type="number" id="dlElev" value="0" step="any"></label></div>
+            <div class="row"><label class="f" for="dlMin">Level at 0% (m)<input type="number" id="dlMin" value="0" step="any"></label><label class="f" for="dlMax">Level at 100% (m)<input type="number" id="dlMax" value="3" step="any"></label></div>
+            <div id="dlOut"></div>
+            <p class="note">ΔP = ρ × g × h with g = 9.80665 m/s². Use density at operating temperature. A negative elevation means the transmitter is above the tap.</p>
+          </div>
+        </div>
+        <div class="block">
+          <h3>Orifice DP to flow</h3>
+          <div class="stackg" style="margin-top:12px">
+            <div class="row"><label class="f" for="orQmax">Flow at max DP<input type="number" id="orQmax" value="100" step="any"></label><label class="f" for="orDpmax">Max DP<input type="number" id="orDpmax" value="2500" step="any"></label><label class="f" for="orDp">Measured DP (same unit)<input type="number" id="orDp" value="625" step="any"></label></div>
+            <div id="orOut"></div>
+          </div>
+        </div>
+        <div class="block">
+          <h3>Control valve Cv, liquid</h3>
+          <div class="stackg" style="margin-top:12px">
+            <div class="row"><label class="f" for="cvQ">Flow (m³/h)<input type="number" id="cvQ" value="50" step="any"></label><label class="f" for="cvSg">Specific gravity<input type="number" id="cvSg" value="1" step="any"></label><label class="f" for="cvDp">Pressure drop (bar)<input type="number" id="cvDp" value="1.5" step="any"></label></div>
+            <div id="cvOut"></div>
+          </div>
+        </div>
+        <div class="block">
+          <h3>Pt100 resistance and temperature</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 14px">Callendar–Van Dusen, IEC 60751, α = 0.00385.</p>
+          <div class="row"><label class="f" for="rtT">Temperature (°C)<input type="number" id="rtT" value="100" step="any"></label><label class="f" for="rtR">Resistance (Ω)<input type="number" id="rtR" step="any"></label></div>
+        </div>
+        <div class="block">
+          <h3>Pressure and temperature converter</h3>
+          <div class="stackg" style="margin-top:12px">
+            <div class="row"><label class="f" for="pcVal">Value<input type="number" id="pcVal" value="10" step="any"></label><label class="f" for="pcFrom">Unit<select id="pcFrom"></select></label></div>
+            <div id="pcOut"></div>
+            <div class="row"><label class="f" for="tcC">°C<input type="number" id="tcC" value="25" step="any"></label><label class="f" for="tcF">°F<input type="number" id="tcF" value="77" step="any"></label><label class="f" for="tcK">K<input type="number" id="tcK" value="298.15" step="any"></label></div>
+            <p class="note">Pressure units convert the number as given. Add 1.01325 bar to a gauge value to get absolute.</p>
+          </div>
+        </div>
+        <div class="block">
+          <h3>2-wire loop power check</h3>
+          <div class="stackg" style="margin-top:12px">
+            <div class="row"><label class="f" for="lpVs">Supply (V)<input type="number" id="lpVs" value="24" step="any"></label><label class="f" for="lpVmin">Transmitter minimum (V)<input type="number" id="lpVmin" value="10.5" step="any"></label><label class="f" for="lpVd">Barrier or isolator drop (V)<input type="number" id="lpVd" value="0" step="any"></label></div>
+            <div class="row"><label class="f" for="lpRx">Receiver (Ω)<input type="number" id="lpRx" value="250" step="any"></label><label class="f" for="lpRc">Cable, both wires (Ω)<input type="number" id="lpRc" value="40" step="any"></label></div>
+            <div id="lpOutP"></div>
+            <p class="note">Checked at 22 mA (high alarm current). Use the minimum terminal voltage on the transmitter datasheet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="signals" data-label="Signals" hidden>
+      <h3 class="tt">Signals and protocols</h3>
+      <p class="intro">What travels on the wires between the field and the control system, and what each choice gives you.</p>
+      <div class="block">
+        <h3>Analog and discrete</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Signal</th><th>What it is</th><th>Notes</th></tr></thead><tbody>
+          <tr><td><b>4–20 mA</b></td><td>Current loop. 4 mA is 0%, 20 mA is 100%.</td><td>Live zero detects a broken wire. Current is the same at every point in the loop. 2-wire devices are powered from the loop.</td></tr>
+          <tr><td><b>NAMUR NE 43</b></td><td>Defines ranges for failure information: below 3.6 mA or above 21 mA is a fault, 3.8 to 20.5 mA is the measuring range.</td><td>Configure the control system to alarm on out-of-range signals.</td></tr>
+          <tr><td><b>1–5 V, 0–10 V</b></td><td>Voltage signals, often from 250 Ω across 4–20 mA.</td><td>Short runs only. Susceptible to noise and voltage drop.</td></tr>
+          <tr><td><b>24 VDC discrete</b></td><td>On/off inputs and outputs for switches, relays and solenoids.</td><td>Normally energised for safety (de-energise to trip). Use line monitoring where needed.</td></tr>
+          <tr><td><b>NAMUR proximity</b></td><td>Two-wire sensors with 8.2 V supply and current change between about 1 and 3 mA.</td><td>Allows wire fault detection with an intrinsically safe barrier.</td></tr>
+          <tr><td><b>Thermocouple, RTD</b></td><td>Low level millivolts or resistance.</td><td>Use correct cable and 3-wire or 4-wire RTD. Convert to 4–20 mA with a head-mounted transmitter for long runs.</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="block">
+        <h3>Digital communication</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Protocol</th><th>Medium and speed</th><th>Typical use</th></tr></thead><tbody>
+          <tr><td><b>HART</b></td><td>Digital FSK (Bell 202) at 1200 baud over the 4–20 mA wires.</td><td>Configuration and diagnostics of smart transmitters and positioners alongside the analog signal.</td></tr>
+          <tr><td><b>WirelessHART (IEC 62591)</b></td><td>2.4 GHz mesh network.</td><td>Monitoring points that are costly to wire.</td></tr>
+          <tr><td><b>FOUNDATION Fieldbus H1</b></td><td>31.25 kbit/s on two wires, power and data together.</td><td>Control in the field and rich diagnostics.</td></tr>
+          <tr><td><b>PROFIBUS PA / DP</b></td><td>PA at 31.25 kbit/s (powered, can be intrinsically safe). DP up to 12 Mbit/s.</td><td>PA for process instruments, DP for drives and I/O.</td></tr>
+          <tr><td><b>Modbus RTU / TCP</b></td><td>RS-485 serial, or over Ethernet.</td><td>Simple links to packages, meters and drives.</td></tr>
+          <tr><td><b>EtherNet/IP, PROFINET</b></td><td>Industrial Ethernet.</td><td>Controllers, drives, remote I/O.</td></tr>
+          <tr><td><b>Ethernet-APL</b></td><td>10 Mbit/s over two wires, up to 1000 m, with power, suitable for hazardous areas.</td><td>Bringing Ethernet and OPC UA to the field instrument.</td></tr>
+          <tr><td><b>OPC UA</b></td><td>Client-server and publish-subscribe data model.</td><td>Vendor-neutral data exchange between systems.</td></tr>
+        </tbody></table></div>
+        <p class="src">Sources: IEC 61158 and IEC 61784 (fieldbus), IEC 62591, IEC 62541, NAMUR NE 43, HART Communication Foundation specifications.</p>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="valves" data-label="Valves" hidden>
+      <h3 class="tt">Control valves and actuators</h3>
+      <p class="intro">The final element does the work. Most loop problems that look like tuning problems are valve problems: wrong size, stiction, wrong characteristic or a slow actuator.</p>
+      <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+        <div class="block">
+          <h3>Inherent flow characteristic</h3>
+          <div class="seg" id="vcSeg" role="group" aria-label="Characteristic" style="margin:12px 0"><button type="button" data-k="lin" aria-pressed="false">Linear</button><button type="button" data-k="eq" aria-pressed="true">Equal percentage</button><button type="button" data-k="qo" aria-pressed="false">Quick opening</button></div>
+          <svg class="chart" id="vcSvg" viewBox="0 0 600 300" role="img" aria-label="Flow versus travel for three valve characteristics"></svg>
+          <label class="f" for="vcTravel" style="margin-top:12px">Travel<input type="range" id="vcTravel" min="0" max="100" value="50"></label>
+          <p id="vcDesc" style="margin-top:10px"></p>
+        </div>
+        <div class="block">
+          <h3>Which way should it fail?</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 12px">Typical practice. The right answer always comes from the hazard analysis for your process.</p>
+          <div class="tablewrap"><table><thead><tr><th>Service</th><th>Typical</th><th>Why</th></tr></thead><tbody>
+            <tr><td>Fuel gas to a burner</td><td>Fail closed</td><td>Stop fuel when control is lost.</td></tr>
+            <tr><td>Steam to a heater</td><td>Fail closed</td><td>Stop heating.</td></tr>
+            <tr><td>Cooling water to an exothermic reactor</td><td>Fail open</td><td>Keep removing heat.</td></tr>
+            <tr><td>Column reflux</td><td>Fail open</td><td>Keep the column cool.</td></tr>
+            <tr><td>Compressor recycle (anti-surge)</td><td>Fail open</td><td>Protect the compressor.</td></tr>
+            <tr><td>Blowdown or depressuring valve</td><td>Fail open</td><td>Release inventory.</td></tr>
+            <tr><td>ESD isolation valve</td><td>Fail closed</td><td>Isolate on a trip.</td></tr>
+            <tr><td>Fire water deluge</td><td>Fail open</td><td>Water flows on loss of supply.</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Valve types</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Type</th><th>Motion</th><th>Strengths</th><th>Watch for</th></tr></thead><tbody>
+          <tr><td><b>Globe</b></td><td>Linear</td><td>Good throttling, tight shutoff available, wide choice of trim.</td><td>Higher pressure drop, larger actuator.</td></tr>
+          <tr><td><b>Ball (V-notch or characterised)</b></td><td>Rotary</td><td>High capacity, good for slurries and fibres.</td><td>Shaft sealing, travel dead zone near closed.</td></tr>
+          <tr><td><b>Butterfly</b></td><td>Rotary</td><td>Large lines, low pressure drop, compact and low cost.</td><td>Flow characteristic and torque at high drop.</td></tr>
+          <tr><td><b>Eccentric rotary plug</b></td><td>Rotary</td><td>Good rangeability, robust.</td><td>Sizing and cavitation limits.</td></tr>
+          <tr><td><b>Diaphragm</b></td><td>Linear</td><td>Corrosive and hygienic services.</td><td>Pressure and temperature limits of the diaphragm.</td></tr>
+          <tr><td><b>Gate and plug (on/off)</b></td><td>Linear or rotary</td><td>Full bore on/off isolation.</td><td>Not for throttling.</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="two">
+        <div class="block"><h3>Actuators</h3><ul class="dots" style="margin-top:10px">
+          <li><b>Pneumatic spring-diaphragm:</b> the standard. The spring sets the fail position.</li>
+          <li><b>Pneumatic piston:</b> higher thrust or torque. Spring return or a volume tank can provide the fail action.</li>
+          <li><b>Electric:</b> no air supply needed. Fail-safe needs a spring return or battery, otherwise it fails in place.</li>
+          <li><b>Hydraulic:</b> very high force and speed, with an accumulator for fail-safe action.</li>
+        </ul></div>
+        <div class="block"><h3>Positioners and accessories</h3><ul class="dots" style="margin-top:10px">
+          <li>A positioner compares the signal with the stem position and drives the actuator air until they match, overcoming friction.</li>
+          <li>Digital positioners give diagnostics such as friction, travel and partial stroke test results.</li>
+          <li>Boosters and large tubing give fast stroke times for anti-surge and ESD valves.</li>
+          <li>Solenoid valves let the safety system override the control signal.</li>
+          <li>Limit switches or position transmitters give independent open and closed feedback.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="topic" data-topic="loops" data-label="Loops" hidden>
+      <h3 class="tt">Control loops</h3>
+      <p class="intro">A loop is a measurement, a decision and an action, closed through the process. Click each part.</p>
+      <div class="block">
+        <div class="node-row" id="nodeRow"><button class="node" data-k="proc" type="button" aria-pressed="false">Process</button><span class="arrow">→</span><button class="node" data-k="sens" type="button" aria-pressed="true">Sensor and transmitter</button><span class="arrow">→</span><button class="node" data-k="ctrl" type="button" aria-pressed="false">Controller</button><span class="arrow">→</span><button class="node" data-k="valve" type="button" aria-pressed="false">Final element</button><span class="arrow">↺</span></div>
+        <p id="nodeDesc" aria-live="polite" style="max-width:70ch"></p>
+      </div>
+      <div class="block">
+        <h3>Why alarms and controllers need a deadband</h3>
+        <p class="muted" style="font-size:.92rem; margin:4px 0 12px; max-width:70ch">The signal below hovers near the alarm limit. Without a deadband the alarm sets and clears over and over. A deadband makes it clear only once the signal has moved well away from the limit.</p>
+        <canvas class="dbcv" id="dbCv" role="img" aria-label="Signal near an alarm limit with a shaded deadband"></canvas>
+        <div class="row" style="margin-top:12px; align-items:end"><label class="f" for="dbWidth">Deadband width: <b id="dbWV">1.0</b><input type="range" id="dbWidth" min="0" max="6" step="0.5" value="0"></label><div class="kpi"><small>State changes in this window</small><b id="dbCount">0</b></div></div>
+        <p id="dbMsg" aria-live="polite" style="margin-top:10px; font-weight:500"></p>
+      </div>
+      <div class="two">
+        <div class="block">
+          <h3>PID in one minute</h3>
+          <ul class="dots" style="margin-top:10px">
+            <li><b>P</b> reacts to the present error. More gain is a faster response and less stability.</li>
+            <li><b>I</b> removes the steady offset by accumulating error. Too much gives overshoot and oscillation.</li>
+            <li><b>D</b> reacts to the rate of change. Useful on slow processes, but amplifies noise, so filter it.</li>
+            <li>Flow and pressure loops are fast and usually PI. Temperature and level can be slow.</li>
+            <li>Use anti-windup and output limits, and bumpless transfer between manual and auto.</li>
+          </ul>
+          <p class="note" style="margin-top:12px">Try it live: the <a href="unwind.html#tune">tuning toy on the Unwind page</a> shows what each setting does.</p>
+        </div>
+        <div class="block">
+          <h3>Ziegler–Nichols closed-loop rules</h3>
+          <p class="muted" style="font-size:.9rem; margin:4px 0 10px">From the ultimate gain Ku and the oscillation period Pu measured with P-only control. Aggressive by design, so detune for real use.</p>
+          <div class="tablewrap"><table><thead><tr><th>Mode</th><th>Kc</th><th>Ti</th><th>Td</th></tr></thead><tbody>
+            <tr><td>P</td><td>0.50 Ku</td><td>–</td><td>–</td></tr>
+            <tr><td>PI</td><td>0.45 Ku</td><td>Pu / 1.2</td><td>–</td></tr>
+            <tr><td>PID</td><td>0.60 Ku</td><td>Pu / 2</td><td>Pu / 8</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Control strategies beyond a single loop</h3>
+        <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Strategy</th><th>What it does</th><th>Typical use</th></tr></thead><tbody>
+          <tr><td><b>Cascade</b></td><td>The output of an outer controller becomes the setpoint of a faster inner loop.</td><td>Temperature over flow of the heating medium, level over flow.</td></tr>
+          <tr><td><b>Ratio</b></td><td>Holds one flow at a ratio to another.</td><td>Air to fuel, blending.</td></tr>
+          <tr><td><b>Feedforward</b></td><td>Acts on a measured disturbance before it hits the process variable.</td><td>Boiler drum level, heat exchangers.</td></tr>
+          <tr><td><b>Split range</b></td><td>One controller output drives two valves in sequence.</td><td>Heating and cooling, pressure control with vent and make-up.</td></tr>
+          <tr><td><b>Override or selector</b></td><td>A limit controller takes over when a constraint is reached.</td><td>Protecting a compressor, high temperature override on a feed.</td></tr>
+          <tr><td><b>Gap or deadband control</b></td><td>The controller does not act until the error leaves a band.</td><td>Surge tanks, where flow smoothness matters more than the exact level.</td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="foot"></footer>
+<script>window.PAGE="field"</script>
+<script src="common.js"></script>
+<script src="sound.js"></script>
+
+<script src="field.js"></script>
+<script>initViews();</script>
+</body></html>
