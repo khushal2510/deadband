@@ -25,4 +25,4 @@ It is plain HTML, CSS and JavaScript with no build step. Open `index.html` in a 
 
 Deployed with GitHub Pages from the root of the `main` branch. The `.nojekyll` file is there on purpose, so keep it.
 
-Built with love by Khushal.
+Built with love by Khushal (Instrumentation & Control Engineer).
